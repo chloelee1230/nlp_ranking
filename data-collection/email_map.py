@@ -92,7 +92,6 @@ def publication_json():
                 author_dict[pub_id] = [a[0]]
 
 
-
     for ID in bibmap['id'].tolist():
         if ID not in files:
             bibs = {}
