@@ -81,6 +81,18 @@ def publication_json():
                 files.append(filename.split('.')[0])
 
 
+    # a dictionary with key = pub_id, value = list of author_id
+    author_dict = {}
+    author_info = pd.read_json('author.json')
+    for a in author_info.values.tolist():
+        for pub_id in a[3]:
+            if pub_id in author_dict.keys():
+                author_dict[pub_id].append(a[0])
+            else:
+                author_dict[pub_id] = [a[0]]
+
+
+
     for ID in bibmap['id'].tolist():
         if ID not in files:
             bibs = {}
@@ -109,8 +121,11 @@ def publication_json():
                 pub_dict['emails'] = get_emails(k, pub_dict['authors'])
                 pub_dict['emails'] = email_match(pub_dict['authors'], pub_dict['emails'])
 
+                pub_dict['author_id'] = author_id(pub_dict['authors'], author_dict[k])
+
                 # print(k)
                 # print(pub_dict['authors'])
+                # print(pub_dict['author_id'])
                 # print(pub_dict['emails'])
 
 
@@ -124,6 +139,10 @@ def publication_json():
             df = pd.DataFrame(pub_data)
             df.to_json('./pub_json/' + ID + '.json', orient='records')
             print("Added " + ID + ".json to file")
+
+
+
+
 
 
 from fuzzywuzzy import fuzz
@@ -191,8 +210,74 @@ def email_match(authors, emails):
         result[v] = emails[k]
 
 
+    return result
+
+
+def name_match_id(name, pub_id):
+    # name in format "lastname, firstname"
+
+    author_info = pd.read_json('author.json')
+    sub = author_info[pd.DataFrame(author_info.publications.tolist()).isin([pub_id]).any(1)]
+
+
+    for a in sub.values.tolist():
+        print(a[2] + ', ' + a[1], fuzz.ratio(a[2] + ', ' + a[1], name))
+        if fuzz.ratio(a[2] + ', ' + a[1], name) > 75:
+            return a[0]
+
+
+
+def author_id(authors, IDs):
+
+    result = [''] * len(authors)
+
+    authors = ['-'.join([b for b in reversed(a.lower().replace(',', '').split(' '))]) for a in authors]
+
+    matrix = []
+    for id in IDs:
+        ratio = [fuzz.ratio(id, name) for name in authors]
+        matrix.append(ratio)
+
+
+    matrix = np.array(matrix)
+
+    indices = {}
+    for score in sorted(set(matrix.flat), reverse=True):
+        cord = np.where(matrix == score)
+        for c in list(zip(cord[0], cord[1])):
+            if c[0] not in indices.keys() and c[1] not in indices.values():
+                indices[c[0]] = c[1]
+
+            if len(indices) == len(authors):
+                break
+
+    for k,v in indices.items():
+        result[v] = IDs[k]
 
     return result
 
+
+def wrapper(func, *args, **kwargs):
+    def wrapped():
+        return func(*args, **kwargs)
+    return wrapped
+
+
+import timeit
+
+
 if __name__ == '__main__':
     publication_json()
+    name = 'McCrae, John'
+    pub_id = 'C10-1025'
+    # author_id()
+    # print(name_match_id(name, pub_id))
+    # wrapped = wrapper(name_match_id, name, pub_id)
+    # print(timeit.timeit(wrapped, number=1))
+
+
+
+    # pub_id = 'C10-1003'
+    # authors = ['Nasukawa, Tetsuya', 'Tsujii, Junichi', 'Andrade, Daniel']
+    # print(pub_dict[pub_id])
+    # author_id(authors, pub_dict[pub_id])
