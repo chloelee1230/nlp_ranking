@@ -483,7 +483,7 @@ detmar-meurers	Detmar	Meurers	C10-2031
 holger-wunsch	Holger	Wunsch	C10-2031
 lijun-feng	Lijun	Feng	C10-2032
 martin-jansche	Martin	Jansche	C10-2032
-matt-huenerfauth	Matt	Huenerfauth	C10-2032
+matt-huenerfauth	Matt	Huenerfauth	C10-2032,W10-1312
 noemie-elhadad	Noémie	Elhadad	C10-2032,W14-4804
 yang-feng	Yang	Feng	C10-2033,P12-1100
 haitao-mi	Haitao	Mi	C10-2033,C10-2096,C10-2136,P15-1110,P10-2003,D10-1027,D13-1052,N15-1108,P11-1086,P10-1145
