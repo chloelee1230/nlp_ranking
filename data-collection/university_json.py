@@ -1,6 +1,9 @@
 import pandas as pd
 from os import walk
 from collections import Counter
+import timeit
+from collections import defaultdict
+
 
 def university_pub():
 
@@ -47,11 +50,77 @@ def parse_email(domain):
     else:
         return domain
 
+# - classify by school by year
+# - for each publication: alpha/# of authors * type of the venue
+import json
+def author_score():
+
+
+    university = pd.read_json('university.json', orient='records')
+    bibmap = json.load(open('bibmap.json'))
+
+    venue_pub = {} # only look at publications with authors from an university institution
+    for pub_id in [y[0] for x in university['publications'].values.tolist() if x for y in x]:
+        venue = find_venue(pub_id)
+        if venue in venue_pub.keys():
+            venue_pub[venue].append(pub_id)
+        else:
+            venue_pub[venue] = [pub_id]
+
+    # scoring each venue type
+    score = {'journal': 2, 'top-conference': 5, 'conference': 3, 'workshop': 1, 'demo': 1}
+
+
+    # authors = {author_id: {2019: {university1_domain: score, university2_domain: score}}}
+    authors = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
+
+
+    for k,v in venue_pub.items():
+        bib = next((y for y in bibmap if y['id'] == k), None)
+        with open('./pub_json/'+ k+'.json') as p:
+            json_file = json.load(p)
+            venue_score = score[bib['type']]
+            for pub in [x for x in json_file if x['id'] in v]:
+                for i in range(len(pub['authors'])):
+                    if '.edu' in pub['emails'][i]:
+                        author_id = pub['author_id'][i]
+                        year = pub['year']
+                        uni_domain = parse_email(pub['emails'][i].split('@')[1])
+                        authors[author_id][year][uni_domain] += 1 / len(pub['authors']) * venue_score
+
+
+
+    print(authors['jinho-d-choi'])
+
+
+def find_venue(pub_id):
+    if 'W' in pub_id:
+        return pub_id[:-2]
+    else:
+        return pub_id[:-3]
+
+def wrapper(func, *args, **kwargs):
+    def wrapped():
+        return func(*args, **kwargs)
+    return wrapped
+
+
 
 
 
 
 if __name__ == '__main__':
-    university_pub()
+    # university_pub()
     ['cs.utexas.edu', 'cs.utexas.edu', 'cs.utexas.edu']
     # print(parse_email('mail.neu.edu.cn'))
+
+    # wrapped = wrapper(find_venue, 'C10-2001')
+    # print(timeit.timeit(wrapped, number=6866))
+    print(timeit.timeit(author_score, number=1))
+
+
+    # author_score()
+
+    # authors = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
+    # authors['a']['b']['c'] += 1/3
+    # print(authors['a']['b']['c'])
