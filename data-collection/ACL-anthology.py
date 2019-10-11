@@ -107,10 +107,6 @@ def filter_bib():
 
 
     for i, b in bibmap.iterrows():
-        if 'workshop' in b['title'].lower():
-            b['type'] = 'workshop'
-        elif 'demonstration' in b['title'].lower():
-            b['type'] = 'demo'
 
         if any(j == b['venue'] for j in journal):
             b['type'] = 'journal'
@@ -122,6 +118,11 @@ def filter_bib():
             b['type'] = 'workshop'
         else:
             b['type'] = 'workshop'
+
+        if 'workshop' in b['title'].lower():
+            b['type'] = 'workshop'
+        elif 'demonstration' in b['title'].lower():
+            b['type'] = 'demo'
 
     bibmap['year'] = bibmap.ID.apply(lambda x: '20' + x[1:3])
 
@@ -249,8 +250,8 @@ def newPDF2txt():
 
 if __name__ == '__main__':
     venues = ['ACL', 'CoNLL', 'EACL', 'EMNLP', 'NAACL', '*SEMEVAL', 'TACL', 'WS', 'COLING', 'IJCNLP']
-    # get_bib(venues)
-    # filter_bib()
+    get_bib(venues)
+    filter_bib()
     # downloadPDF()
     # pdf2txt()
-    newPDF2txt()
+    # newPDF2txt()
