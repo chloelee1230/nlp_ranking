@@ -82,7 +82,7 @@ def author_bib():
 def author2json():
 
     dat = pd.read_csv('author_publications.txt', sep='\t', header=None)
-    dat.columns = ['key', 'firstname', 'lastname', 'publications']
+    dat.columns = ['author_id', 'firstname', 'lastname', 'publications']
 
     dat['publications'] = dat['publications'].str.split(',')
 

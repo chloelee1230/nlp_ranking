@@ -43,6 +43,52 @@ def university_pub():
     df.to_json('university.json', orient='records')
 
 
+def university_pub2():
+
+    universities = pd.read_csv('us_universities.tsv', sep='\t', names=['university', 'domain', 'city', 'state'])
+
+
+    uni = {}
+
+
+    for (dirpath, dirnames, filenames) in walk('./pub_json/'):
+        for filename in filenames:
+            if '.json' in filename:
+                pub = pd.read_json(dirpath + filename)
+                records = pub.to_dict(orient='records')
+                # print(records)
+
+                for record in records:
+                    domains = [parse_email(e.split('@')[-1]) for e in record['emails']]
+                    # print(record['emails'])
+                    c = Counter(domains)
+                    for key in c.keys():
+                        if key in universities['domain'].tolist():
+                            if key in uni.keys():
+                                # (pub_id, year, contribution_percentage)
+                                uni[key].append((record['id'], c[key]/len(record['authors'])))
+                            else:
+                                uni[key] = [(record['id'], c[key]/len(record['authors']))]
+
+
+
+    print(uni)
+
+    university_list = []
+    for k,v in uni.items():
+        name = universities[universities['domain'] == k]['university'].values[0]
+        university_list.append({'domain_id': k, 'publications': v})
+
+    df = pd.DataFrame(university_list)
+    df.to_json('university.json', orient='records')
+
+
+
+
+
+
+
+
 def parse_email(domain):
     if '.edu' in domain:
         d = domain.split('.')
@@ -68,7 +114,7 @@ def author_score():
             venue_pub[venue] = [pub_id]
 
     # scoring each venue type
-    score = {'journal': 2, 'top-conference': 5, 'conference': 3, 'workshop': 1, 'demo': 1}
+    score = {'journal': 3, 'top-conference': 3, 'conference': 2, 'workshop': 1, 'demo': 1}
 
 
     # authors = {author_id: {2019: {university1_domain: score, university2_domain: score}}}
@@ -116,7 +162,7 @@ if __name__ == '__main__':
 
     # wrapped = wrapper(find_venue, 'C10-2001')
     # print(timeit.timeit(wrapped, number=6866))
-    print(timeit.timeit(author_score, number=1))
+    # print(timeit.timeit(author_score, number=1))
 
 
     # author_score()
@@ -124,3 +170,4 @@ if __name__ == '__main__':
     # authors = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
     # authors['a']['b']['c'] += 1/3
     # print(authors['a']['b']['c'])
+    university_pub2()

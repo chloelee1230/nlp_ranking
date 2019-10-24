@@ -51,12 +51,12 @@ def get_bibFiles(url):
             title = d.find('h4').select("a[class='align-middle']")[0].text
             bib = d.find('h4').find('span').find('a', class_ = 'badge badge-secondary align-middle mr-1').get('href')
 
-            bibfile = requests.get('https://www.aclweb.org' + bib)
-            filename = bib.split('/')[-1]
-            filepath = './bib/' + filename
-            with open(filepath, 'wb') as f:
-                print('Writing file ' + filename + '...')
-                f.write(bibfile.content)
+            # bibfile = requests.get('https://www.aclweb.org' + bib)
+            # filename = bib.split('/')[-1]
+            # filepath = './bib/' + filename
+            # with open(filepath, 'wb') as f:
+            #     print('Writing file ' + filename + '...')
+            #     f.write(bibfile.content)
 
             result[id] = title
 
@@ -104,15 +104,18 @@ def filter_bib():
     journal = ['CL', 'TACL']
     top = ['ACL', 'NAACL', 'EMNLP']
     conferences = ['CoNLL', 'EACL', 'COLING', 'IJCNLP']
+    con = ['ACL', 'NAACL', 'EMNLP', 'CoNLL', 'EACL', 'COLING', 'IJCNLP']
 
 
     for i, b in bibmap.iterrows():
 
         if any(j == b['venue'] for j in journal):
             b['type'] = 'journal'
-        elif any(t == b['venue'] for t in top):
-            b['type'] = 'top-conference'
-        elif any(c == b['venue'] for c in conferences):
+        # elif any(t == b['venue'] for t in top):
+        #     b['type'] = 'conference_a'
+        # elif any(c == b['venue'] for c in conferences):
+        #     b['type'] = 'conference_b'
+        elif any(c == b['venue'] for c in con):
             b['type'] = 'conference'
         elif b['venue'] == '*SEMEVAL':
             b['type'] = 'workshop'
@@ -122,7 +125,7 @@ def filter_bib():
         if 'workshop' in b['title'].lower():
             b['type'] = 'workshop'
         elif 'demonstration' in b['title'].lower():
-            b['type'] = 'demo'
+            b['type'] = 'demonstration'
 
     bibmap['year'] = bibmap.ID.apply(lambda x: '20' + x[1:3])
 
@@ -250,7 +253,7 @@ def newPDF2txt():
 
 if __name__ == '__main__':
     venues = ['ACL', 'CoNLL', 'EACL', 'EMNLP', 'NAACL', '*SEMEVAL', 'TACL', 'WS', 'COLING', 'IJCNLP']
-    get_bib(venues)
+    # get_bib(venues)
     filter_bib()
     # downloadPDF()
     # pdf2txt()
