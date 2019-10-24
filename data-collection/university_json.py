@@ -114,12 +114,14 @@ def author_score():
             venue_pub[venue] = [pub_id]
 
     # scoring each venue type
-    score = {'journal': 3, 'top-conference': 3, 'conference': 2, 'workshop': 1, 'demo': 1}
+    score = {'journal': 3, 'top-conference': 3, 'conference': 3, 'workshop': 1, 'demonstration': 1}
 
 
     # authors = {author_id: {2019: {university1_domain: score, university2_domain: score}}}
     authors = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
 
+
+    empty = []
 
     for k,v in venue_pub.items():
         bib = next((y for y in bibmap if y['id'] == k), None)
@@ -130,6 +132,8 @@ def author_score():
                 for i in range(len(pub['authors'])):
                     if '.edu' in pub['emails'][i]:
                         author_id = pub['author_id'][i]
+                        if author_id == '':
+                            empty.append(k)
                         year = pub['year']
                         uni_domain = parse_email(pub['emails'][i].split('@')[1])
                         authors[author_id][year][uni_domain] += 1 / len(pub['authors']) * venue_score
@@ -137,6 +141,7 @@ def author_score():
 
 
     print(authors['jinho-d-choi'])
+
 
 
 def find_venue(pub_id):
@@ -162,7 +167,7 @@ if __name__ == '__main__':
 
     # wrapped = wrapper(find_venue, 'C10-2001')
     # print(timeit.timeit(wrapped, number=6866))
-    # print(timeit.timeit(author_score, number=1))
+    print(timeit.timeit(author_score, number=1))
 
 
     # author_score()
@@ -170,4 +175,4 @@ if __name__ == '__main__':
     # authors = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
     # authors['a']['b']['c'] += 1/3
     # print(authors['a']['b']['c'])
-    university_pub2()
+    # university_pub2()

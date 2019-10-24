@@ -92,8 +92,15 @@ def publication_json():
                 author_dict[pub_id] = [a[0]]
 
 
+    empty = 0
+    empty_pub = []
+
+
+
     for ID in bibmap['id'].tolist():
-        if ID not in files:
+        # if ID == 'C10-1':
+        if ID in ['W16-15', 'W16-29', 'W16-10', 'W16-28', 'W16-16', 'W16-04', 'W16-23', 'W16-20', 'W16-19', 'W16-13', 'W16-27', 'W16-17', 'W16-25', 'W16-05', 'W16-12', 'W16-03']:
+        # if ID not in files:
             bibs = {}
             pub_data = []
 
@@ -122,6 +129,15 @@ def publication_json():
 
                 pub_dict['author_id'] = author_id(pub_dict['authors'], author_dict[k])
 
+
+                if '' in pub_dict['author_id']:
+                    empty += 1
+                    empty_pub.append(k)
+
+                    # print(k)
+                    # print(pub_dict['authors'])
+                    # print(author_dict[k])
+
                 # print(k)
                 # print(pub_dict['authors'])
                 # print(pub_dict['author_id'])
@@ -139,7 +155,11 @@ def publication_json():
             df.to_json('./pub_json/' + ID + '.json', orient='records')
             print("Added " + ID + ".json to file")
 
+            # break
 
+
+    print(empty)
+    print(empty_pub)
 
 
 
