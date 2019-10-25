@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <title>NLP ranking</title>
+</head>
+<body>
+<h1 style="text-align: center">NLP Ranking</h1>
+
+<p>Rank institutions by publications from
+    <select name="start-year">
+        <option value="2010" selected>2010</option>
+        <option value="2011">2011</option>
+        <option value="2012">2012</option>
+        <option value="2013">2013</option>
+        <option value="2014">2014</option>
+        <option value="2015">2015</option>
+        <option value="2016">2016</option>
+        <option value="2017">2017</option>
+        <option value="2018">2018</option>
+        <option value="2019">2019</option>
+    </select>
+    to
+    <select name="end-year">
+        <option value="2010">2010</option>
+        <option value="2011">2011</option>
+        <option value="2012">2012</option>
+        <option value="2013">2013</option>
+        <option value="2014">2014</option>
+        <option value="2015">2015</option>
+        <option value="2016">2016</option>
+        <option value="2017">2017</option>
+        <option value="2018">2018</option>
+        <option value="2019" selected>2019</option>
+    </select>
+</p>
+
+
+
+<div class="container">
+
+    <div class="row row-no-gutters">
+
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <h4>Weighting Mechanism</h4>
+
+            <form action='/' method="POST">
+                <p style="font-weight: bold">Journals</p>
+                CL: <input type="text" name="CL" value="3" style="width: 2em"><br>
+                TACL: <input type="text" name="TACL" value="3" style="width: 2em"><br>
+
+                <p style="font-weight: bold">Conferences</p>
+                ACL: <input type="text" name="ACL-C" value="3" style="width: 2em"><br>
+                NAACL: <input type="text" name="NAACL-C" value="3" style="width: 2em"><br>
+                EMNLP: <input type="text" name="EMNLP-C" value="3" style="width: 2em"><br>
+                CoNLL: <input type="text" name="CoNLL-C" value="2" style="width: 2em"><br>
+                EACL: <input type="text" name="EACL-C" value="2" style="width: 2em"><br>
+                COLING: <input type="text" name="COLING" value="2" style="width: 2em"><br>
+                IJCNLP: <input type="text" name="IJCNLP" value="2" style="width: 2em"><br>
+
+                <p style="font-weight: bold">Workshops & Demonstrations</p>
+                ACL: <input type="text" name="ACL-WSD" value="1" style="width: 2em"><br>
+                NAACL: <input type="text" name="NAACL-WSD" value="1" style="width: 2em"><br>
+                EMNLP: <input type="text" name="EMNLP-WSD" value="1" style="width: 2em"><br>
+                CoNLL: <input type="text" name="CoNLL-WSD" value="1" style="width: 2em"><br>
+                EACL: <input type="text" name="EACL-WSD" value="1" style="width: 2em"><br>
+
+                <br><input type="submit" value="Re-weight">
+
+
+            </form>
+            <br>
+        </div>
+
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            {% for table in tables %}
+                {{ table|safe }}
+            {% endfor %}
+
+
+            <!--<table id="nlp-ranking">-->
+                <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>#</th>-->
+                        <!--<th>Institution</th>-->
+                        <!--<th>Score</th>-->
+                        <!--&lt;!&ndash;<th>Faculty</th>&ndash;&gt;-->
+                    <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                    <!--&lt;!&ndash;{% for t in test %}&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li>{{ t }}</li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;{% endfor %}&ndash;&gt;-->
+                <!--</tbody>-->
+            <!--</table>-->
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+</body>
+</html>
