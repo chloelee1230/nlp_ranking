@@ -141,8 +141,18 @@ def ranking(startYear, endYear,
                         result[institution[0]] = institution[1]
 
 
-    rank = pd.DataFrame(sorted(list(result.items()), key=lambda x: x[1], reverse=True),
-                        columns=['Institution', 'Score'])
+    us_universities = pd.read_csv('../data-collection/us_universities.tsv', sep='\t', names=['name', 'domain', 'city', 'state'])
+
+    us_name = dict(zip(us_universities.domain, us_universities.name))
+
+    rank = pd.DataFrame(sorted(list(result.items()), key=lambda x: x[1], reverse=True), columns=['Institution', 'Score'])
+    rank = rank[rank['Institution'].isin(us_name.keys())]
+
+    rank = rank.replace({'Institution': us_name})
+    rank = rank.round(2)
+    rank = rank.reset_index(drop=True)
+
+    # print(rank)
 
     return rank
 
@@ -163,8 +173,6 @@ def find_venue(pub_id):
         return pub_id[:-3]
 
 
-def test(HI, TRYING):
-    dict = {'hi': HI, 'trying': TRYING}
 
 if __name__ == '__main__':
     # ranking(2010,2019, 3,3,3,3,3,2,2,2,2,1,1,1,1,1)
